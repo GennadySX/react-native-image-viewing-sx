@@ -14,6 +14,7 @@ import {
   StyleSheet,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  TouchableOpacity
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -37,6 +38,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  onPress: () => void
 };
 
 const ImageItem = ({
@@ -47,6 +49,7 @@ const ImageItem = ({
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
+                     onPress
 }: Props) => {
   const imageContainer = React.createRef<any>();
   const imageDimensions = useImageDimensions(imageSrc);
@@ -127,12 +130,15 @@ const ImageItem = ({
         onScrollEndDrag,
       })}
     >
-      <Animated.Image
-        {...panHandlers}
-        source={imageSrc}
-        style={imageStylesWithOpacity}
-        onLoad={onLoaded}
-      />
+
+      <TouchableOpacity onPress={onPress}>
+        <Animated.Image
+          {...panHandlers}
+          source={imageSrc}
+          style={imageStylesWithOpacity}
+          onLoad={() => setTimeout(() => onLoaded(), 1000)}
+        />
+      </TouchableOpacity>
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </Animated.ScrollView>
   );

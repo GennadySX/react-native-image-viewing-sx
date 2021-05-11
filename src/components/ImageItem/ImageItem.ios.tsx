@@ -36,6 +36,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 type Props = {
   imageSrc: ImageSource;
   onRequestClose: () => void;
+  onPress: () => void;
   onZoom: (scaled: boolean) => void;
   onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
@@ -48,6 +49,7 @@ const ImageItem = ({
   onZoom,
   onRequestClose,
   onLongPress,
+                     onPress,
   delayLongPress,
   swipeToCloseEnabled = true,
   doubleTapToZoomEnabled = true,
@@ -133,14 +135,14 @@ const ImageItem = ({
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
         <TouchableWithoutFeedback
-          onPress={doubleTapToZoomEnabled ? handleDoubleTap : undefined}
+          onPress={doubleTapToZoomEnabled ? handleDoubleTap : onPress}
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >
           <Animated.Image
             source={imageSrc}
             style={imageStylesWithOpacity}
-            onLoad={() => setLoaded(true)}
+            onLoad={() => setTimeout(() => setLoaded(true), 1000)}
           />
         </TouchableWithoutFeedback>
       </ScrollView>
