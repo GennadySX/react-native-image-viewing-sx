@@ -15,7 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
-    StatusBar
+  StatusBar, Platform
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -50,6 +50,7 @@ const DEFAULT_BG_COLOR = "#000";
 const DEFAULT_DELAY_LONG_PRESS = 800;
 const SCREEN = Dimensions.get("screen");
 const SCREEN_WIDTH = SCREEN.width;
+const SCREEN_HEIGHT = SCREEN.height;
 
 function ImageViewing({
   images,
@@ -102,9 +103,12 @@ function ImageViewing({
   }
 
   useEffect(() => {
-    StatusBar.setHidden(true)
-    return () => {
-      StatusBar.setHidden(false)
+    const isIOS = Platform.OS === 'ios'
+    if (isIOS) {
+      StatusBar.setHidden(true)
+      return () => {
+        StatusBar.setHidden(false)
+      }
     }
   }, [])
 
@@ -186,6 +190,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
+    height: SCREEN_HEIGHT,
+    width: SCREEN_WIDTH
   },
   header: {
     position: "absolute",
