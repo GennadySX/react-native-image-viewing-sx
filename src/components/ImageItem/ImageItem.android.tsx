@@ -14,7 +14,7 @@ import {
   StyleSheet,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  TouchableOpacity
+  TouchableOpacity, TouchableWithoutFeedback
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -90,7 +90,7 @@ const ImageItem = ({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
     outputRange: [0.7, 1, 0.7],
   });
-  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
+  const imageStylesWithOpacity = { ...imagesStyles};
 
   const onScrollEndDrag = ({
     nativeEvent,
@@ -131,14 +131,14 @@ const ImageItem = ({
       })}
     >
 
-      <TouchableOpacity onPress={onPress}>
+      <TouchableWithoutFeedback onPress={onPress}>
         <Animated.Image
           {...panHandlers}
           source={imageSrc}
           style={imageStylesWithOpacity}
           onLoad={() => setTimeout(() => onLoaded(), 1000)}
         />
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </Animated.ScrollView>
   );

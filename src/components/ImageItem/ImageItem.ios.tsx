@@ -135,7 +135,10 @@ const ImageItem = ({
       >
         {(!loaded || !imageDimensions) && <ImageLoading />}
         <TouchableWithoutFeedback
-          onPress={doubleTapToZoomEnabled ? handleDoubleTap : onPress}
+          onPress={(e) => {
+            onPress()
+            doubleTapToZoomEnabled && handleDoubleTap(e)
+          }}
           onLongPress={onLongPressHandler}
           delayLongPress={delayLongPress}
         >

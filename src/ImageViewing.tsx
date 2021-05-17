@@ -15,6 +15,7 @@ import {
   VirtualizedList,
   ModalProps,
   Modal,
+    StatusBar
 } from "react-native";
 
 import ImageItem from "./components/ImageItem/ImageItem";
@@ -76,6 +77,9 @@ function ImageViewing({
     toggleBarsVisible,
   ] = useAnimatedComponents();
 
+  const [hideLayer, setHideLayer] = React.useState(false)
+  const [isScaling, setScaling] = React.useState(false)
+
   useEffect(() => {
     if (onImageIndexChange) {
       onImageIndexChange(currentImageIndex);
@@ -87,6 +91,8 @@ function ImageViewing({
       // @ts-ignore
       imageList?.current?.setNativeProps({ scrollEnabled: !isScaled });
       toggleBarsVisible(!isScaled);
+      setScaling(true)
+      setTimeout(() =>  setScaling(false))
     },
     [imageList],
   );
@@ -94,6 +100,13 @@ function ImageViewing({
   if (!visible) {
     return null;
   }
+
+  useEffect(() => {
+    StatusBar.setHidden(true)
+    return () => {
+      StatusBar.setHidden(false)
+    }
+  }, [])
 
   return (
     <Modal
@@ -107,7 +120,7 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        <Animated.View style={[styles.header, { transform: headerTransform }]}>
+        {!hideLayer && <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined"
             ? (
               React.createElement(HeaderComponent, {
@@ -117,7 +130,7 @@ function ImageViewing({
             : (
               <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
             )}
-        </Animated.View>
+        </Animated.View>}
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -140,9 +153,10 @@ function ImageViewing({
             <ImageItem
               onZoom={onZoom}
               imageSrc={imageSrc}
-              onPress={() => {
-                onPress && onPress()
-              }}
+              onPress={() => setTimeout(
+                  () => !isScaling && setHideLayer(!hideLayer),
+                  300)
+              }
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}
@@ -155,7 +169,7 @@ function ImageViewing({
           keyExtractor={(imageSrc) => imageSrc.uri || `${imageSrc}`}
         />
         {typeof FooterComponent !== "undefined" && (
-          <Animated.View
+            !hideLayer && <Animated.View
             style={[styles.footer, { transform: footerTransform }]}
           >
             {React.createElement(FooterComponent, {
