@@ -112,6 +112,10 @@ function ImageViewing({
     }
   }, [])
 
+  useEffect(() => {
+    toggleBarsVisible(!hideLayer)
+  }, [hideLayer])
+
   return (
     <Modal
       transparent={presentationStyle === "overFullScreen"}
@@ -124,7 +128,7 @@ function ImageViewing({
     >
       <StatusBarManager presentationStyle={presentationStyle} />
       <View style={[styles.container, { opacity, backgroundColor }]}>
-        {!hideLayer && <Animated.View style={[styles.header, { transform: headerTransform }]}>
+         <Animated.View style={[styles.header, { transform: headerTransform }]}>
           {typeof HeaderComponent !== "undefined"
             ? (
               React.createElement(HeaderComponent, {
@@ -134,7 +138,7 @@ function ImageViewing({
             : (
               <ImageDefaultHeader onRequestClose={onRequestCloseEnhanced} />
             )}
-        </Animated.View>}
+        </Animated.View>
         <VirtualizedList
           ref={imageList}
           data={images}
@@ -157,10 +161,7 @@ function ImageViewing({
             <ImageItem
               onZoom={onZoom}
               imageSrc={imageSrc}
-              onPress={() => setTimeout(
-                  () => !isScaling && setHideLayer(!hideLayer),
-                  300)
-              }
+              onPress={() => setHideLayer(!hideLayer)}
               onRequestClose={onRequestCloseEnhanced}
               onLongPress={onLongPress}
               delayLongPress={delayLongPress}
@@ -173,7 +174,7 @@ function ImageViewing({
           keyExtractor={(imageSrc) => imageSrc.uri || `${imageSrc}`}
         />
         {typeof FooterComponent !== "undefined" && (
-            !hideLayer && <Animated.View
+             <Animated.View
             style={[styles.footer, { transform: footerTransform }]}
           >
             {React.createElement(FooterComponent, {
