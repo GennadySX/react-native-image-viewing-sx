@@ -23,6 +23,7 @@ import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
+import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
@@ -32,6 +33,7 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
+  defaultSource?: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   onLongPress: (image: ImageSource) => void;
@@ -43,6 +45,7 @@ type Props = {
 
 const ImageItem = ({
   imageSrc,
+  defaultSource,
   onZoom,
   onRequestClose,
   onLongPress,
@@ -79,6 +82,7 @@ const ImageItem = ({
     doubleTapToZoomEnabled,
     onLongPress: onLongPressHandler,
     delayLongPress,
+    onPress
   });
 
   const imagesStyles = getImageStyles(
@@ -131,14 +135,14 @@ const ImageItem = ({
       })}
     >
 
-      <TouchableWithoutFeedback onPress={onPress}>
+
         <Animated.Image
           {...panHandlers}
           source={imageSrc}
+          defaultSource={defaultSource}
           style={imageStylesWithOpacity}
-          onLoad={() => setTimeout(() => onLoaded(), 1000)}
+          onLoad={onLoaded}
         />
-      </TouchableWithoutFeedback>
       {(!isLoaded || !imageDimensions) && <ImageLoading />}
     </Animated.ScrollView>
   );

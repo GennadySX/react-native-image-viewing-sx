@@ -29,6 +29,7 @@ import { ImageSource } from "./@types";
 
 type Props = {
   images: ImageSource[];
+  defaultSource?: ImageSource;
   imageIndex: number;
   visible: boolean;
   onRequestClose: () => void;
@@ -58,6 +59,7 @@ function ImageViewing({
   visible,
   onRequestClose,
   onPress,
+    defaultSource,
   onLongPress = () => {},
   onImageIndexChange,
   animationType = DEFAULT_ANIMATION_TYPE,
@@ -160,6 +162,7 @@ function ImageViewing({
           renderItem={({ item: imageSrc }) => (
             <ImageItem
               onZoom={onZoom}
+              defaultSource={defaultSource}
               imageSrc={imageSrc}
               onPress={() => setHideLayer(!hideLayer)}
               onRequestClose={onRequestCloseEnhanced}

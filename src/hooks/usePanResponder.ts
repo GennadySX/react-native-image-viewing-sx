@@ -39,6 +39,7 @@ type Props = {
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
+  onPress?: () => void;
   delayLongPress: number;
 };
 
@@ -49,6 +50,7 @@ const usePanResponder = ({
   doubleTapToZoomEnabled,
   onLongPress,
   delayLongPress,
+    onPress,
 }: Props): Readonly<
   [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
 > => {
@@ -125,6 +127,10 @@ const usePanResponder = ({
   };
 
   const handlers = {
+    onStartShouldSetPanResponder: () => {
+      onPress && onPress()
+      return true
+    },
     onGrant: (
       _: GestureResponderEvent,
       gestureState: PanResponderGestureState
