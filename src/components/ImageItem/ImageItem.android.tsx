@@ -14,7 +14,6 @@ import {
   StyleSheet,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  TouchableOpacity, TouchableWithoutFeedback
 } from "react-native";
 
 import useImageDimensions from "../../hooks/useImageDimensions";
@@ -23,7 +22,6 @@ import usePanResponder from "../../hooks/usePanResponder";
 import { getImageStyles, getImageTransform } from "../../utils";
 import { ImageSource } from "../../@types";
 import { ImageLoading } from "./ImageLoading";
-import useDoubleTapToZoom from "../../hooks/useDoubleTapToZoom";
 
 const SWIPE_CLOSE_OFFSET = 75;
 const SWIPE_CLOSE_VELOCITY = 1.75;
@@ -33,27 +31,23 @@ const SCREEN_HEIGHT = SCREEN.height;
 
 type Props = {
   imageSrc: ImageSource;
-  defaultSource?: ImageSource;
   onRequestClose: () => void;
   onZoom: (isZoomed: boolean) => void;
   onLongPress: (image: ImageSource) => void;
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
-  onPress: () => void
 };
 
 const ImageItem = ({
-  imageSrc,
-  defaultSource,
-  onZoom,
-  onRequestClose,
-  onLongPress,
-  delayLongPress,
-  swipeToCloseEnabled = true,
-  doubleTapToZoomEnabled = true,
-                     onPress
-}: Props) => {
+                     imageSrc,
+                     onZoom,
+                     onRequestClose,
+                     onLongPress,
+                     delayLongPress,
+                     swipeToCloseEnabled = true,
+                     doubleTapToZoomEnabled = true,
+                   }: Props) => {
   const imageContainer = React.createRef<any>();
   const imageDimensions = useImageDimensions(imageSrc);
   const [translate, scale] = getImageTransform(imageDimensions, SCREEN);
@@ -82,69 +76,65 @@ const ImageItem = ({
     doubleTapToZoomEnabled,
     onLongPress: onLongPressHandler,
     delayLongPress,
-    onPress
   });
 
   const imagesStyles = getImageStyles(
-    imageDimensions,
-    translateValue,
-    scaleValue
+      imageDimensions,
+      translateValue,
+      scaleValue
   );
   const imageOpacity = scrollValueY.interpolate({
     inputRange: [-SWIPE_CLOSE_OFFSET, 0, SWIPE_CLOSE_OFFSET],
     outputRange: [0.7, 1, 0.7],
   });
-  const imageStylesWithOpacity = { ...imagesStyles};
+  const imageStylesWithOpacity = { ...imagesStyles, opacity: imageOpacity };
 
   const onScrollEndDrag = ({
-    nativeEvent,
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+                             nativeEvent,
+                           }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const velocityY = nativeEvent?.velocity?.y ?? 0;
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
     if (
-      (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
-        offsetY > SWIPE_CLOSE_OFFSET) ||
-      offsetY > SCREEN_HEIGHT / 2
+        (Math.abs(velocityY) > SWIPE_CLOSE_VELOCITY &&
+            offsetY > SWIPE_CLOSE_OFFSET) ||
+        offsetY > SCREEN_HEIGHT / 2
     ) {
       onRequestClose();
     }
   };
 
   const onScroll = ({
-    nativeEvent,
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
+                      nativeEvent,
+                    }: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetY = nativeEvent?.contentOffset?.y ?? 0;
 
     scrollValueY.setValue(offsetY);
   };
 
   return (
-    <Animated.ScrollView
-      ref={imageContainer}
-      style={styles.listItem}
-      pagingEnabled
-      nestedScrollEnabled
-      showsHorizontalScrollIndicator={false}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.imageScrollContainer}
-      scrollEnabled={swipeToCloseEnabled}
-      {...(swipeToCloseEnabled && {
-        onScroll,
-        onScrollEndDrag,
-      })}
-    >
-
-
+      <Animated.ScrollView
+          ref={imageContainer}
+          style={styles.listItem}
+          pagingEnabled
+          nestedScrollEnabled
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.imageScrollContainer}
+          scrollEnabled={swipeToCloseEnabled}
+          {...(swipeToCloseEnabled && {
+            onScroll,
+            onScrollEndDrag,
+          })}
+      >
         <Animated.Image
-          {...panHandlers}
-          source={imageSrc}
-          defaultSource={defaultSource}
-          style={imageStylesWithOpacity}
-          onLoad={onLoaded}
+            {...panHandlers}
+            source={imageSrc}
+            style={imageStylesWithOpacity}
+            onLoad={onLoaded}
         />
-      {(!isLoaded || !imageDimensions) && <ImageLoading />}
-    </Animated.ScrollView>
+        {(!isLoaded || !imageDimensions) && <ImageLoading />}
+      </Animated.ScrollView>
   );
 };
 

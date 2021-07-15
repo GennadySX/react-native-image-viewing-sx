@@ -6,8 +6,8 @@ import {
 } from "react-native";
 
 const StatusBarManager = ({
-  presentationStyle,
-}: {
+                            presentationStyle,
+                          }: {
   presentationStyle?: ModalProps["presentationStyle"];
 }) => {
   if (Platform.OS === "ios" || presentationStyle !== "overFullScreen") {

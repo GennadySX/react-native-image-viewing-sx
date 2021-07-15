@@ -15,9 +15,9 @@ const SCREEN_WIDTH = SCREEN.width;
 const SCREEN_HEIGHT = SCREEN.height;
 
 export const ImageLoading = () => (
-  <View style={styles.loading}>
-    <ActivityIndicator size="large" color="#04164B" />
-  </View>
+    <View style={styles.loading}>
+      <ActivityIndicator size="small" color="#FFF" />
+    </View>
 );
 
 const styles = StyleSheet.create({
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     alignItems: "center",
-    position: "absolute",
     justifyContent: "center",
   },
   imageScrollContainer: {

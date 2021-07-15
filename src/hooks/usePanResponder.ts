@@ -39,21 +39,19 @@ type Props = {
   onZoom: (isZoomed: boolean) => void;
   doubleTapToZoomEnabled: boolean;
   onLongPress: () => void;
-  onPress?: () => void;
   delayLongPress: number;
 };
 
 const usePanResponder = ({
-  initialScale,
-  initialTranslate,
-  onZoom,
-  doubleTapToZoomEnabled,
-  onLongPress,
-  delayLongPress,
-    onPress,
-}: Props): Readonly<
-  [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
-> => {
+                           initialScale,
+                           initialTranslate,
+                           onZoom,
+                           doubleTapToZoomEnabled,
+                           onLongPress,
+                           delayLongPress,
+                         }: Props): Readonly<
+    [GestureResponderHandlers, Animated.Value, Animated.ValueXY]
+    > => {
   let numberInitialTouches = 1;
   let initialTouches: NativeTouchEvent[] = [];
   let currentScale = initialScale;
@@ -69,8 +67,8 @@ const usePanResponder = ({
   const translateValue = new Animated.ValueXY(initialTranslate);
 
   const imageDimensions = getImageDimensionsByTranslate(
-    initialTranslate,
-    SCREEN
+      initialTranslate,
+      SCREEN
   );
 
   const getBounds = (scale: number) => {
@@ -108,9 +106,9 @@ const usePanResponder = ({
   };
 
   const fitsScreenByWidth = () =>
-    imageDimensions.width * currentScale < SCREEN_WIDTH;
+      imageDimensions.width * currentScale < SCREEN_WIDTH;
   const fitsScreenByHeight = () =>
-    imageDimensions.height * currentScale < SCREEN_HEIGHT;
+      imageDimensions.height * currentScale < SCREEN_HEIGHT;
 
   useEffect(() => {
     scaleValue.addListener(({ value }) => {
@@ -127,13 +125,9 @@ const usePanResponder = ({
   };
 
   const handlers = {
-    onStartShouldSetPanResponder: () => {
-      onPress && onPress()
-      return true
-    },
     onGrant: (
-      _: GestureResponderEvent,
-      gestureState: PanResponderGestureState
+        _: GestureResponderEvent,
+        gestureState: PanResponderGestureState
     ) => {
       numberInitialTouches = gestureState.numberActiveTouches;
 
@@ -142,8 +136,8 @@ const usePanResponder = ({
       longPressHandlerRef = setTimeout(onLongPress, delayLongPress);
     },
     onStart: (
-      event: GestureResponderEvent,
-      gestureState: PanResponderGestureState
+        event: GestureResponderEvent,
+        gestureState: PanResponderGestureState
     ) => {
       initialTouches = event.nativeEvent.touches;
       numberInitialTouches = gestureState.numberActiveTouches;
@@ -154,7 +148,7 @@ const usePanResponder = ({
       // Handle double tap event by calculating diff between first and second taps timestamps
 
       isDoubleTapPerformed = Boolean(
-        lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
+          lastTapTS && tapTS - lastTapTS < DOUBLE_TAP_DELAY
       );
 
       if (doubleTapToZoomEnabled && isDoubleTapPerformed) {
@@ -163,40 +157,40 @@ const usePanResponder = ({
         const targetScale = SCALE_MAX;
         const nextScale = isScaled ? initialScale : targetScale;
         const nextTranslate = isScaled
-          ? initialTranslate
-          : getTranslateInBounds(
-              {
-                x:
-                  initialTranslate.x +
-                  (SCREEN_WIDTH / 2 - touchX) * (targetScale / currentScale),
-                y:
-                  initialTranslate.y +
-                  (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale),
-              },
-              targetScale
+            ? initialTranslate
+            : getTranslateInBounds(
+                {
+                  x:
+                      initialTranslate.x +
+                      (SCREEN_WIDTH / 2 - touchX) * (targetScale / currentScale),
+                  y:
+                      initialTranslate.y +
+                      (SCREEN_HEIGHT / 2 - touchY) * (targetScale / currentScale),
+                },
+                targetScale
             );
 
         onZoom(!isScaled);
 
         Animated.parallel(
-          [
-            Animated.timing(translateValue.x, {
-              toValue: nextTranslate.x,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(translateValue.y, {
-              toValue: nextTranslate.y,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-            Animated.timing(scaleValue, {
-              toValue: nextScale,
-              duration: 300,
-              useNativeDriver: true,
-            }),
-          ],
-          { stopTogether: false }
+            [
+              Animated.timing(translateValue.x, {
+                toValue: nextTranslate.x,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(translateValue.y, {
+                toValue: nextTranslate.y,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+              Animated.timing(scaleValue, {
+                toValue: nextScale,
+                duration: 300,
+                useNativeDriver: true,
+              }),
+            ],
+            { stopTogether: false }
         ).start(() => {
           currentScale = nextScale;
           currentTranslate = nextTranslate;
@@ -208,8 +202,8 @@ const usePanResponder = ({
       }
     },
     onMove: (
-      event: GestureResponderEvent,
-      gestureState: PanResponderGestureState
+        event: GestureResponderEvent,
+        gestureState: PanResponderGestureState
     ) => {
       const { dx, dy } = gestureState;
 
@@ -224,24 +218,24 @@ const usePanResponder = ({
       }
 
       if (
-        numberInitialTouches === 1 &&
-        gestureState.numberActiveTouches === 2
+          numberInitialTouches === 1 &&
+          gestureState.numberActiveTouches === 2
       ) {
         numberInitialTouches = 2;
         initialTouches = event.nativeEvent.touches;
       }
 
       const isTapGesture =
-        numberInitialTouches == 1 && gestureState.numberActiveTouches === 1;
+          numberInitialTouches == 1 && gestureState.numberActiveTouches === 1;
       const isPinchGesture =
-        numberInitialTouches === 2 && gestureState.numberActiveTouches === 2;
+          numberInitialTouches === 2 && gestureState.numberActiveTouches === 2;
 
       if (isPinchGesture) {
         cancelLongPressHandle();
 
         const initialDistance = getDistanceBetweenTouches(initialTouches);
         const currentDistance = getDistanceBetweenTouches(
-          event.nativeEvent.touches
+            event.nativeEvent.touches
         );
 
         let nextScale = (currentDistance / initialDistance) * currentScale;
@@ -252,7 +246,7 @@ const usePanResponder = ({
          */
         if (nextScale < initialScale) {
           nextScale =
-            nextScale + (initialScale - nextScale) * OUT_BOUND_MULTIPLIER;
+              nextScale + (initialScale - nextScale) * OUT_BOUND_MULTIPLIER;
         }
 
         /**
@@ -262,16 +256,16 @@ const usePanResponder = ({
           const k = (currentScale - initialScale) / (currentScale - nextScale);
 
           const nextTranslateX =
-            nextScale < initialScale
-              ? initialTranslate.x
-              : currentTranslate.x -
-                (currentTranslate.x - initialTranslate.x) / k;
+              nextScale < initialScale
+                  ? initialTranslate.x
+                  : currentTranslate.x -
+                  (currentTranslate.x - initialTranslate.x) / k;
 
           const nextTranslateY =
-            nextScale < initialScale
-              ? initialTranslate.y
-              : currentTranslate.y -
-                (currentTranslate.y - initialTranslate.y) / k;
+              nextScale < initialScale
+                  ? initialTranslate.y
+                  : currentTranslate.y -
+                  (currentTranslate.y - initialTranslate.y) / k;
 
           translateValue.x.setValue(nextTranslateX);
           translateValue.y.setValue(nextTranslateY);
@@ -287,7 +281,7 @@ const usePanResponder = ({
         const { x, y } = currentTranslate;
         const { dx, dy } = gestureState;
         const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
+            currentScale
         );
 
         let nextTranslateX = x + dx;
@@ -295,25 +289,25 @@ const usePanResponder = ({
 
         if (nextTranslateX > leftBound) {
           nextTranslateX =
-            nextTranslateX -
-            (nextTranslateX - leftBound) * OUT_BOUND_MULTIPLIER;
+              nextTranslateX -
+              (nextTranslateX - leftBound) * OUT_BOUND_MULTIPLIER;
         }
 
         if (nextTranslateX < rightBound) {
           nextTranslateX =
-            nextTranslateX -
-            (nextTranslateX - rightBound) * OUT_BOUND_MULTIPLIER;
+              nextTranslateX -
+              (nextTranslateX - rightBound) * OUT_BOUND_MULTIPLIER;
         }
 
         if (nextTranslateY > topBound) {
           nextTranslateY =
-            nextTranslateY - (nextTranslateY - topBound) * OUT_BOUND_MULTIPLIER;
+              nextTranslateY - (nextTranslateY - topBound) * OUT_BOUND_MULTIPLIER;
         }
 
         if (nextTranslateY < bottomBound) {
           nextTranslateY =
-            nextTranslateY -
-            (nextTranslateY - bottomBound) * OUT_BOUND_MULTIPLIER;
+              nextTranslateY -
+              (nextTranslateY - bottomBound) * OUT_BOUND_MULTIPLIER;
         }
 
         if (fitsScreenByWidth()) {
@@ -354,7 +348,7 @@ const usePanResponder = ({
       if (tmpTranslate) {
         const { x, y } = tmpTranslate;
         const [topBound, leftBound, bottomBound, rightBound] = getBounds(
-          currentScale
+            currentScale
         );
 
         let nextTranslateX = x;

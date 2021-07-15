@@ -48,15 +48,15 @@ const useImageDimensions = (image: ImageSource): Dimensions | null => {
         } else {
           // @ts-ignore
           Image.getSizeWithHeaders(
-            source.uri,
-            source.headers,
-            (width: number, height: number) => {
-              imageDimensionsCache.set(cacheKey, { width, height });
-              resolve({ width, height });
-            },
-            () => {
-              resolve({ width: 0, height: 0 });
-            }
+              source.uri,
+              source.headers,
+              (width: number, height: number) => {
+                imageDimensionsCache.set(cacheKey, { width, height });
+                resolve({ width, height });
+              },
+              () => {
+                resolve({ width: 0, height: 0 });
+              }
           );
         }
       } else {

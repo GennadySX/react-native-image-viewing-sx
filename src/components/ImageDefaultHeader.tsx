@@ -16,15 +16,15 @@ type Props = {
 const HIT_SLOP = { top: 16, left: 16, bottom: 16, right: 16 };
 
 const ImageDefaultHeader = ({ onRequestClose }: Props) => (
-  <SafeAreaView style={styles.root}>
-    <TouchableOpacity
-      style={styles.closeButton}
-      onPress={onRequestClose}
-      hitSlop={HIT_SLOP}
-    >
-      <Text style={styles.closeText}>✕</Text>
-    </TouchableOpacity>
-  </SafeAreaView>
+    <SafeAreaView style={styles.root}>
+      <TouchableOpacity
+          style={styles.closeButton}
+          onPress={onRequestClose}
+          hitSlop={HIT_SLOP}
+      >
+        <Text style={styles.closeText}>✕</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
 );
 
 const styles = StyleSheet.create({
