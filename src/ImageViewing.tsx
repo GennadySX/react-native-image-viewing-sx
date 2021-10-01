@@ -138,6 +138,7 @@ function ImageViewing({
                   <ImageItem
                       onZoom={onZoom}
                       imageSrc={imageSrc}
+                      currentImageIndex={currentImageIndex}
                       onRequestClose={onRequestCloseEnhanced}
                       onLongPress={onLongPress}
                       delayLongPress={delayLongPress}

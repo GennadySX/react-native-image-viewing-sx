@@ -6,7 +6,7 @@
  *
  */
 
-import React, { useState, useCallback } from "react";
+import React, {useState, useCallback, useEffect} from "react";
 
 import {
   Animated,
@@ -37,6 +37,7 @@ type Props = {
   delayLongPress: number;
   swipeToCloseEnabled?: boolean;
   doubleTapToZoomEnabled?: boolean;
+  currentImageIndex?: number
 };
 
 const ImageItem = ({
@@ -44,6 +45,7 @@ const ImageItem = ({
                      onZoom,
                      onRequestClose,
                      onLongPress,
+                     currentImageIndex,
                      delayLongPress,
                      swipeToCloseEnabled = true,
                      doubleTapToZoomEnabled = true,
@@ -103,6 +105,11 @@ const ImageItem = ({
       onRequestClose();
     }
   };
+
+  useEffect(() => {
+    scrollValueY.setValue(0)
+  }, [currentImageIndex, scale, imagesStyles, scaleValue])
+
 
   const onScroll = ({
                       nativeEvent,
